@@ -56,8 +56,8 @@ class HintSegmentTest {
 
     @Test
     void testGetHintsIterator() {
-        Hint first = new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap("k1"));
-        Hint second = new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap("k2"));
+        Hint first = new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap2("k1"));
+        Hint second = new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap2("k2"));
 
         HintSegment writer = HintSegment.open(root.resolve("001.hint"));
         writer.append(first);

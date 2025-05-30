@@ -24,8 +24,8 @@ class LogCleanerTest extends LogSegmentSupport {
         writeRecords(
                 "00000000000000000000.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1"), 0),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"), 0)
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1"), 0),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"), 0)
                 ));
         LogSegment segment000 = LogSegment.open(root.resolve("00000000000000000000.log"));
 
@@ -33,31 +33,31 @@ class LogCleanerTest extends LogSegmentSupport {
         writeHints(
                 "00000000000000000000.hint",
                 List.of(
-                        new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap("k1")),
-                        new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap("k2"))
+                        new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap2("k1")),
+                        new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap2("k2"))
                 ));
 
         writeRecords(
                 "00000000000000000001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("vu"), 1),
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"), 1)
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("vu"), 1),
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"), 1)
                 ));
         LogSegment segment001 = LogSegment.open(root.resolve("00000000000000000001.log"));
 
         writeRecords(
                 "00000000000000000002.log",
                 List.of(
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("vu"), 2),
-                        Record.of(Bytes.wrap("k4"), Bytes.wrap("v4"), 2)
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("vu"), 2),
+                        Record.of(Bytes.wrap2("k4"), Bytes.wrap2("v4"), 2)
                 ));
         LogSegment segment002 = LogSegment.open(root.resolve("00000000000000000002.log"));
 
         KeyDir keyDir = new KeyDir();
-        keyDir.update(Record.of(Bytes.wrap("k1"), Bytes.wrap("v1"), 0), segment000);
-        keyDir.update(Record.of(Bytes.wrap("k2"), Bytes.wrap("vu"), 1), segment001);
-        keyDir.update(Record.of(Bytes.wrap("k3"), Bytes.wrap("vu"), 2), segment002);
-        keyDir.update(Record.of(Bytes.wrap("k4"), Bytes.wrap("v4"), 2), segment002);
+        keyDir.update(Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1"), 0), segment000);
+        keyDir.update(Record.of(Bytes.wrap2("k2"), Bytes.wrap2("vu"), 1), segment001);
+        keyDir.update(Record.of(Bytes.wrap2("k3"), Bytes.wrap2("vu"), 2), segment002);
+        keyDir.update(Record.of(Bytes.wrap2("k4"), Bytes.wrap2("v4"), 2), segment002);
 
         LogSegmentNameGenerator nameGenerator = LogSegmentNameGenerator.from(segment002);
         Supplier<LogSegment> activeSegmentSupplier = () -> segment002;
@@ -99,10 +99,10 @@ class LogCleanerTest extends LogSegmentSupport {
                 .withCompactionInterval(Duration.ZERO) // Disables automatic compaction.
                 .build();
 
-        assertEquals(Bytes.wrap("v1"), store.get(Bytes.wrap("k1")).orElseThrow());
-        assertEquals(Bytes.wrap("vu"), store.get(Bytes.wrap("k2")).orElseThrow());
-        assertEquals(Bytes.wrap("vu"), store.get(Bytes.wrap("k3")).orElseThrow());
-        assertEquals(Bytes.wrap("v4"), store.get(Bytes.wrap("k4")).orElseThrow());
+        assertEquals(Bytes.wrap2("v1"), store.get(Bytes.wrap2("k1")).orElseThrow());
+        assertEquals(Bytes.wrap2("vu"), store.get(Bytes.wrap2("k2")).orElseThrow());
+        assertEquals(Bytes.wrap2("vu"), store.get(Bytes.wrap2("k3")).orElseThrow());
+        assertEquals(Bytes.wrap2("v4"), store.get(Bytes.wrap2("k4")).orElseThrow());
 
         // Clean up deleted segments.
         cleaner.cleanLog();
@@ -113,9 +113,9 @@ class LogCleanerTest extends LogSegmentSupport {
         assertFalse(Files.exists(root.resolve("00000000000000000001.log.deleted")));
 
         // There are no missing entries.
-        assertEquals(Bytes.wrap("v1"), store.get(Bytes.wrap("k1")).orElseThrow());
-        assertEquals(Bytes.wrap("vu"), store.get(Bytes.wrap("k2")).orElseThrow());
-        assertEquals(Bytes.wrap("vu"), store.get(Bytes.wrap("k3")).orElseThrow());
-        assertEquals(Bytes.wrap("v4"), store.get(Bytes.wrap("k4")).orElseThrow());
+        assertEquals(Bytes.wrap2("v1"), store.get(Bytes.wrap2("k1")).orElseThrow());
+        assertEquals(Bytes.wrap2("vu"), store.get(Bytes.wrap2("k2")).orElseThrow());
+        assertEquals(Bytes.wrap2("vu"), store.get(Bytes.wrap2("k3")).orElseThrow());
+        assertEquals(Bytes.wrap2("v4"), store.get(Bytes.wrap2("k4")).orElseThrow());
     }
 }

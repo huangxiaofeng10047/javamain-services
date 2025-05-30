@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //package com.javamain.java.bytecode.example01;
 //
 //import com.sun.tools.javap.JavapTask;
@@ -53,7 +52,6 @@
 //
 //
 //
-=======
 //package com.javamain.java.bytecode.example01;
 //
 //import com.sun.tools.javap.JavapTask;
@@ -108,4 +106,3 @@
 //
 //
 //
->>>>>>> 6d96e7e0c1420f234e11ca49b02863b7c5f79a7c

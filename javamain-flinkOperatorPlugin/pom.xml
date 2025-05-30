@@ -167,9 +167,29 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                    <executable>/home/xfhuang/.sdkman/candidates/java/11.0.25-amzn/bin/javac</executable>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>11</version> # 明确指定 JDK 版本
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
         </plugins>
 
     </build>

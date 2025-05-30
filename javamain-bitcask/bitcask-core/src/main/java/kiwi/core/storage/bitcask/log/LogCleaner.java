@@ -79,7 +79,7 @@ public class LogCleaner implements AutoCloseable {
         return interval.toSeconds() + (long) ((Math.random() - 0.5) * 2 * jitter);
     }
 
-    void compactLog() {
+   public void compactLog() {
         logger.info("Log compaction started");
 
         Map<Bytes, Long> keyTimestampMap = buildKeyTimestampMap();
@@ -152,7 +152,7 @@ public class LogCleaner implements AutoCloseable {
         logger.info("Log compaction ended");
     }
 
-    void cleanLog() {
+    public void cleanLog() {
         try (Stream<Path> paths = Files.walk(logDir)) {
             paths.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().endsWith(".deleted"))

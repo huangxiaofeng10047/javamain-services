@@ -41,7 +41,7 @@ class LogSegmentTest extends LogSegmentSupport {
         LogSegment segment = LogSegment.open(file, true);
 
         assertThrows(KiwiWriteException.class, () -> {
-            Record record = Record.of(Bytes.wrap("k"), Bytes.wrap("v"));
+            Record record = Record.of(Bytes.wrap2("k"), Bytes.wrap2("v"));
             segment.append(record);
         });
     }
@@ -55,11 +55,11 @@ class LogSegmentTest extends LogSegmentSupport {
     @Test
     void testOpenAsReadWriteDoesNotOverwriteExistingFile() {
         LogSegment segment = LogSegment.open(root.resolve("001.log"));
-        int written = segment.append(Record.of(Bytes.wrap("k"), Bytes.wrap("v")));
+        int written = segment.append(Record.of(Bytes.wrap2("k"), Bytes.wrap2("v")));
         segment.close();
 
         LogSegment newSegment = LogSegment.open(root.resolve("001.log"));
-        written += newSegment.append(Record.of(Bytes.wrap("k"), Bytes.wrap("updated")));
+        written += newSegment.append(Record.of(Bytes.wrap2("k"), Bytes.wrap2("updated")));
 
         assertEquals(written, newSegment.position());
     }
@@ -69,7 +69,7 @@ class LogSegmentTest extends LogSegmentSupport {
         LogSegment segment = LogSegment.open(root.resolve("001.log"));
         assertEquals(0, segment.position());
 
-        Record record = Record.of(Bytes.wrap("k"), Bytes.wrap("v"));
+        Record record = Record.of(Bytes.wrap2("k"), Bytes.wrap2("v"));
         int written = segment.append(record);
         assertEquals(written, segment.position());
     }
@@ -99,19 +99,19 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1"), 0L),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"), 1L),
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"), 2L)
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1"), 0L),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"), 1L),
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"), 2L)
                 ));
         LogSegment segment = LogSegment.open(root.resolve("001.log"), true);
         assertEquals(0.0, segment.dirtyRatio(Map.of(
-                Bytes.wrap("k1"), 0L,
-                Bytes.wrap("k2"), 0L,
-                Bytes.wrap("k3"), 0L
+                Bytes.wrap2("k1"), 0L,
+                Bytes.wrap2("k2"), 0L,
+                Bytes.wrap2("k3"), 0L
         )));
         assertEquals(2.0 / 3.0, segment.dirtyRatio(Map.of(
-                Bytes.wrap("k1"), 1L,
-                Bytes.wrap("k2"), 1L
+                Bytes.wrap2("k1"), 1L,
+                Bytes.wrap2("k2"), 1L
         )));
         assertEquals(1.0, segment.dirtyRatio(Map.of()));
     }
@@ -121,13 +121,13 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1"), 1L),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"), 1L, System.currentTimeMillis() - 1000)
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1"), 1L),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"), 1L, System.currentTimeMillis() - 1000)
                 ));
         LogSegment segment = LogSegment.open(root.resolve("001.log"), true);
         assertEquals(0.5, segment.dirtyRatio(Map.of(
-                Bytes.wrap("k1"), 1L,
-                Bytes.wrap("k2"), 1L
+                Bytes.wrap2("k1"), 1L,
+                Bytes.wrap2("k2"), 1L
         )));
     }
 
@@ -143,20 +143,20 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1")),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2")),
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v11")),
-                        Record.of(Bytes.wrap("k2"), Bytes.EMPTY),
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"), 0L, 1L) // Expired.
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1")),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2")),
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v11")),
+                        Record.of(Bytes.wrap2("k2"), Bytes.EMPTY),
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"), 0L, 1L) // Expired.
                 ));
 
         LogSegment segment = LogSegment.open(root.resolve("001.log"), true);
         Map<Bytes, ValueReference> keydir = segment.buildKeyDir();
 
         assertEquals(3, keydir.size());
-        assertEquals("v11", keydir.get(Bytes.wrap("k1")).get().toString());
-        assertNull(keydir.get(Bytes.wrap("k2")));
-        assertNull(keydir.get(Bytes.wrap("k3")));
+        assertEquals("v11", keydir.get(Bytes.wrap2("k1")).get().toString());
+        assertNull(keydir.get(Bytes.wrap2("k2")));
+        assertNull(keydir.get(Bytes.wrap2("k3")));
     }
 
     @Test
@@ -168,28 +168,28 @@ class LogSegmentTest extends LogSegmentSupport {
         writeHints(
                 "001.hint",
                 List.of(
-                        new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap("k1")),
-                        new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap("k2")),
-                        new Hint(new Header(0L, 0L, 1L, 2, 2), 3 * (Header.BYTES + 2) + 2 * 2, Bytes.wrap("k3")) // Expired.
+                        new Hint(new Header(0L, 0L, 0L, 2, 2), Header.BYTES + 2, Bytes.wrap2("k1")),
+                        new Hint(new Header(0L, 0L, 0L, 2, 2), 2 * (Header.BYTES + 2) + 2, Bytes.wrap2("k2")),
+                        new Hint(new Header(0L, 0L, 1L, 2, 2), 3 * (Header.BYTES + 2) + 2 * 2, Bytes.wrap2("k3")) // Expired.
                 ));
 
         LogSegment segment = LogSegment.open(root.resolve("001.log"), true);
         Map<Bytes, ValueReference> keydir = segment.buildKeyDir();
 
         assertEquals(3, keydir.size());
-        assertNull(keydir.get(Bytes.wrap("k3")));
+        assertNull(keydir.get(Bytes.wrap2("k3")));
 
         // Log file is populated with records to prepare data for assertions.
         writeRecords(
                 "001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1")),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2")),
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"), 0L, 1L) // Expired.
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1")),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2")),
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"), 0L, 1L) // Expired.
                 ));
 
-        assertEquals("v1", keydir.get(Bytes.wrap("k1")).get().toString());
-        assertEquals("v2", keydir.get(Bytes.wrap("k2")).get().toString());
+        assertEquals("v1", keydir.get(Bytes.wrap2("k1")).get().toString());
+        assertEquals("v2", keydir.get(Bytes.wrap2("k2")).get().toString());
     }
 
     @Test
@@ -197,17 +197,17 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "001.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1"), 0L),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"), 0L),
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v11"), 1L),
-                        Record.of(Bytes.wrap("k2"), Bytes.EMPTY, 1L),
-                        Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"), 1L, 1L) // Expired.
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1"), 0L),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"), 0L),
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v11"), 1L),
+                        Record.of(Bytes.wrap2("k2"), Bytes.EMPTY, 1L),
+                        Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"), 1L, 1L) // Expired.
                 ));
 
         LogSegment segment = LogSegment.open(root.resolve("001.log"), true);
         Map<Bytes, Long> keyTimestampMap = Map.of(
-                Bytes.wrap("k1"), 1L,
-                Bytes.wrap("k3"), 1L
+                Bytes.wrap2("k1"), 1L,
+                Bytes.wrap2("k3"), 1L
         );
 
         List<Record> records = new ArrayList<>();
@@ -216,7 +216,7 @@ class LogSegmentTest extends LogSegmentSupport {
         }
 
         assertEquals(1, records.size());
-        assertEquals(Record.of(Bytes.wrap("k1"), Bytes.wrap("v11"), 1L), records.getFirst());
+        assertEquals(Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v11"), 1L), records.getFirst());
     }
 
     @Test
@@ -224,8 +224,8 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "000.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1")),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"))
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1")),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"))
                 ));
 
         LogSegment segment = LogSegment.open(root.resolve("000.log"));
@@ -234,7 +234,7 @@ class LogSegmentTest extends LogSegmentSupport {
         assertDoesNotThrow(() -> {
             segment.read(0, Header.BYTES);
         });
-        assertThrows(KiwiWriteException.class, () -> segment.append(Record.of(Bytes.wrap("k3"), Bytes.wrap("v3"))));
+        assertThrows(KiwiWriteException.class, () -> segment.append(Record.of(Bytes.wrap2("k3"), Bytes.wrap2("v3"))));
     }
 
     @Test
@@ -242,8 +242,8 @@ class LogSegmentTest extends LogSegmentSupport {
         writeRecords(
                 "000.log",
                 List.of(
-                        Record.of(Bytes.wrap("k1"), Bytes.wrap("v1")),
-                        Record.of(Bytes.wrap("k2"), Bytes.wrap("v2"))
+                        Record.of(Bytes.wrap2("k1"), Bytes.wrap2("v1")),
+                        Record.of(Bytes.wrap2("k2"), Bytes.wrap2("v2"))
                 ));
 
         LogSegment segment = LogSegment.open(root.resolve("000.log"), true);

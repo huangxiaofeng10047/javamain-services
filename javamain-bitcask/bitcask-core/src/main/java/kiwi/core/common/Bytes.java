@@ -38,7 +38,15 @@ public class Bytes {
         }
         return new Bytes(bytes);
     }
-
+    /**
+     * 将 bytes[] 数组包装成 Bytes 对象
+     */
+    public static Bytes wrap2(String byteString) {
+        if (byteString == null) {
+            return null;
+        }
+        return new Bytes(byteString.getBytes());
+    }
     public byte[] get() {
         return this.bytes;
     }

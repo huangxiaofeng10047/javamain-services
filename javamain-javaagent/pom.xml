@@ -16,6 +16,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <asm.version>9.6</asm.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -93,6 +94,13 @@
             <artifactId>asm-analysis</artifactId>
             <version>${asm.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>/home/xfhuang/.sdkman/candidates/java/8.0.452-kona/lib/tools.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
@@ -130,7 +138,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>

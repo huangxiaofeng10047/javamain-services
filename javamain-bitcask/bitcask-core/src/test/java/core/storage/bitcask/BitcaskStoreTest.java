@@ -27,27 +27,27 @@ class BitcaskStoreTest {
     @Test
     void testPutAndGet() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"));
-        store.put(Bytes.wrap("k3"), Bytes.wrap("v3"));
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1-updated"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"));
+        store.put(Bytes.wrap2("k3"), Bytes.wrap2("v3"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1-updated"));
 
         assertEquals(3, store.size());
-        assertEquals(Bytes.wrap("v1-updated"), store.get(Bytes.wrap("k1")).orElseThrow());
-        assertEquals(Bytes.wrap("v2"), store.get(Bytes.wrap("k2")).orElseThrow());
-        assertEquals(Bytes.wrap("v3"), store.get(Bytes.wrap("k3")).orElseThrow());
+        assertEquals(Bytes.wrap2("v1-updated"), store.get(Bytes.wrap2("k1")).orElseThrow());
+        assertEquals(Bytes.wrap2("v2"), store.get(Bytes.wrap2("k2")).orElseThrow());
+        assertEquals(Bytes.wrap2("v3"), store.get(Bytes.wrap2("k3")).orElseThrow());
     }
 
     @Test
     void testPutAndGetWithTTL() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
         // Expired because TTL is in the past.
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"), -30 * 1000);
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"), -30 * 1000);
 
         assertEquals(2, store.size());
-        assertEquals(Bytes.wrap("v1"), store.get(Bytes.wrap("k1")).orElseThrow());
-        assertTrue(store.get(Bytes.wrap("k2")).isEmpty());
+        assertEquals(Bytes.wrap2("v1"), store.get(Bytes.wrap2("k1")).orElseThrow());
+        assertTrue(store.get(Bytes.wrap2("k2")).isEmpty());
 
         // Expired record is removed from keydir on read.
         assertEquals(1, store.size());
@@ -56,43 +56,43 @@ class BitcaskStoreTest {
     @Test
     void testGetNonExistentKey() {
         BitcaskStore store = BitcaskStore.open(root);
-        assertTrue(store.get(Bytes.wrap("k1")).isEmpty());
+        assertTrue(store.get(Bytes.wrap2("k1")).isEmpty());
     }
 
     @Test
     void testDelete() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"));
-        store.put(Bytes.wrap("k3"), Bytes.wrap("v3"));
-        store.delete(Bytes.wrap("k1"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"));
+        store.put(Bytes.wrap2("k3"), Bytes.wrap2("v3"));
+        store.delete(Bytes.wrap2("k1"));
 
         assertEquals(2, store.size());
-        assertFalse(store.get(Bytes.wrap("k1")).isPresent());
-        assertEquals(Bytes.wrap("v2"), store.get(Bytes.wrap("k2")).orElseThrow());
-        assertEquals(Bytes.wrap("v3"), store.get(Bytes.wrap("k3")).orElseThrow());
+        assertFalse(store.get(Bytes.wrap2("k1")).isPresent());
+        assertEquals(Bytes.wrap2("v2"), store.get(Bytes.wrap2("k2")).orElseThrow());
+        assertEquals(Bytes.wrap2("v3"), store.get(Bytes.wrap2("k3")).orElseThrow());
     }
 
     @Test
     void testContains() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"));
-        store.put(Bytes.wrap("k3"), Bytes.wrap("v3"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"));
+        store.put(Bytes.wrap2("k3"), Bytes.wrap2("v3"));
 
-        assertTrue(store.contains(Bytes.wrap("k1")));
-        assertTrue(store.contains(Bytes.wrap("k2")));
-        assertTrue(store.contains(Bytes.wrap("k3")));
-        assertFalse(store.contains(Bytes.wrap("k4")));
+        assertTrue(store.contains(Bytes.wrap2("k1")));
+        assertTrue(store.contains(Bytes.wrap2("k2")));
+        assertTrue(store.contains(Bytes.wrap2("k3")));
+        assertFalse(store.contains(Bytes.wrap2("k4")));
     }
 
     @Test
     void testSize() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"));
-        store.put(Bytes.wrap("k3"), Bytes.wrap("v3"));
-        store.delete(Bytes.wrap("k1"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"));
+        store.put(Bytes.wrap2("k3"), Bytes.wrap2("v3"));
+        store.delete(Bytes.wrap2("k1"));
 
         assertEquals(2, store.size());
     }
@@ -115,10 +115,10 @@ class BitcaskStoreTest {
         BitcaskStore store = BitcaskStore.open(root);
 
         assertEquals(3, store.size());
-        assertEquals(Bytes.wrap("v1-new"), store.get(Bytes.wrap("k1")).orElseThrow());
-        assertEquals(Bytes.wrap("v2-updated"), store.get(Bytes.wrap("k2")).orElseThrow());
-        assertTrue(store.get(Bytes.wrap("k3")).isEmpty());
-        assertEquals(Bytes.wrap("v4"), store.get(Bytes.wrap("k4")).orElseThrow());
+        assertEquals(Bytes.wrap2("v1-new"), store.get(Bytes.wrap2("k1")).orElseThrow());
+        assertEquals(Bytes.wrap2("v2-updated"), store.get(Bytes.wrap2("k2")).orElseThrow());
+        assertTrue(store.get(Bytes.wrap2("k3")).isEmpty());
+        assertEquals(Bytes.wrap2("v4"), store.get(Bytes.wrap2("k4")).orElseThrow());
     }
 
     @Test
@@ -143,7 +143,7 @@ class BitcaskStoreTest {
                 .build();
 
         // PUT adds 32 + 4 = 36 bytes to the active segment and triggers roll.
-        store.put(Bytes.wrap("c"), Bytes.wrap("3"));
+        store.put(Bytes.wrap2("c"), Bytes.wrap2("3"));
 
         files = listLogFiles();
         assertEquals(2, files.size());
@@ -151,18 +151,18 @@ class BitcaskStoreTest {
         assertEquals(expectedSecond, files.getLast().getFileName());
 
         // Inactive segment should serve reads.
-        assertEquals("1", store.get(Bytes.wrap("a")).orElseThrow().toString());
-        assertEquals("2", store.get(Bytes.wrap("b")).orElseThrow().toString());
-        assertEquals("3", store.get(Bytes.wrap("c")).orElseThrow().toString());
+        assertEquals("1", store.get(Bytes.wrap2("a")).orElseThrow().toString());
+        assertEquals("2", store.get(Bytes.wrap2("b")).orElseThrow().toString());
+        assertEquals("3", store.get(Bytes.wrap2("c")).orElseThrow().toString());
     }
 
     @Test
     void testPurge() {
         BitcaskStore store = BitcaskStore.open(root);
-        store.put(Bytes.wrap("k1"), Bytes.wrap("v1"));
-        store.put(Bytes.wrap("k2"), Bytes.wrap("v2"));
-        store.put(Bytes.wrap("k3"), Bytes.wrap("v3"));
-        store.delete(Bytes.wrap("k1"));
+        store.put(Bytes.wrap2("k1"), Bytes.wrap2("v1"));
+        store.put(Bytes.wrap2("k2"), Bytes.wrap2("v2"));
+        store.put(Bytes.wrap2("k3"), Bytes.wrap2("v3"));
+        store.delete(Bytes.wrap2("k1"));
 
         assertEquals(2, store.size());
 
@@ -192,8 +192,8 @@ class BitcaskStoreTest {
         try (FileChannel channel = FileChannel.open(root.resolve(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             entries.forEach((entry) -> {
                 try {
-                    Bytes key = Bytes.wrap(entry.key());
-                    Bytes value = entry.value() == null ? Record.TOMBSTONE : Bytes.wrap(entry.value());
+                    Bytes key = Bytes.wrap(entry.key().getBytes());
+                    Bytes value = entry.value() == null ? Record.TOMBSTONE : Bytes.wrap2(entry.value());
                     channel.write(Record.of(key, value, 0).toByteBuffer());
                 } catch (IOException ex) {
                     fail(ex);

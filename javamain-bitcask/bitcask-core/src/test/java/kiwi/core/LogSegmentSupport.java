@@ -1,7 +1,8 @@
-package core;
+package kiwi.core;
 
 import kiwi.core.storage.bitcask.log.Hint;
 import kiwi.core.storage.bitcask.log.Record;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class LogSegmentSupport {
                 try {
                     channel.write(record.toByteBuffer());
                 } catch (IOException ex) {
-                    fail(ex);
+                    Assertions.fail(ex);
                 }
             });
         }
@@ -35,7 +36,7 @@ public class LogSegmentSupport {
                 try {
                     channel.write(hint.toByteBuffer());
                 } catch (IOException ex) {
-                    fail(ex);
+                    Assertions.fail(ex);
                 }
             });
         }
